@@ -8,6 +8,12 @@ import {
   Animated
 } from 'react-native';
 
+/*
+Animation system runs outside of normal react native flow
+only rerenders once
+doesnt edit state for every pixel it changes
+*/
+
 class Ball extends Component {
   componentWillMount() {
     //Set current position for Ball using ValueXY
