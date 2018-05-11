@@ -5,13 +5,28 @@ import {
   View,
   Text,
   StyleSheet,
+  Animated
 } from 'react-native';
 
 class Ball extends Component {
+  componentWillMount() {
+    //Set current position for Ball using ValueXY
+    //(Where is the item right now?)
+    this.position = new Animated.ValueXY(0, 0);
+    //Spring used to change current position
+    //(Where is the element moving to?)
+    Animated.spring(this.position, {
+      toValue: { x: 200, y: 500 }
+    }).start();
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-      </View>
+      {/*pass animation from componentWillMount
+        Animated.View knows what to do with animation*/}
+      <Animated.View style={this.position.getLayout()}>
+        <View style={styles.container} />
+      </Animated.View>
     );
   }
 }
