@@ -9,19 +9,21 @@ import {
 } from 'react-native';
 
 class Deck extends Component {
+  //normal constructor
   constructor(props) {
     super(props);
-
+    //PanResponder is for Gesture recognition
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gesture) => {
-        console.log(gesture);
+
       },
       onPanResponderRelease: () => {}
     });
     this.state = { panResponder }; //Works as this.panResponder = panResponder;
   }
 
+  //prop method renderCard
   renderCards() {
     return this.props.data.map(item => {
       return this.props.renderCard(item);
@@ -30,7 +32,10 @@ class Deck extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View
+        {...this.state.panResponder.panHandlers}
+        style={styles.container}
+      >
         {this.renderCards()}
       </View>
     );
