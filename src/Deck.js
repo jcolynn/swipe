@@ -9,7 +9,10 @@ import {
   Dimensions
 } from 'react-native';
 
+//Constants for Dimensions and hard coded numbers
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SWIPE_THRESHOLD = 0.35 * SCREEN_WIDTH;
+const SWIPE_OUT_DURATION = 250;
 
 class Deck extends Component {
   constructor(props) {
@@ -23,20 +26,44 @@ class Deck extends Component {
       onPanResponderMove: (event, gesture) => {
         position.setValue({ x: gesture.dx ,y: gesture.dy })
       },
-      onPanResponderRelease: () => {}
+      onPanResponderRelease: (event, gesture) => {
+        if (gesture.dx > SWIPE_THRESHOLD) {
+          this.forceSwipe('right');
+        } else if (gesture.dx < -SWIPE_THRESHOLD) {
+          this.forceSwipe('left')
+        } else {
+          this.resetPosition();
+        }
+      }
     });
     //Not supposed to mutate state
     this.state = { panResponder, position }; //Works as this.panResponder = panResponder; and this.position = position
   }
+  //Helper function for swiping endpoint
+  forceSwipe(direction) {
+    //ternary expression to decide direction
+    const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
+    Animated.timing(this.state.position, {
+      toValue: { x, y: 0 },
+      duration: SWIPE_OUT_DURATION
+    }).start();
+  }
 
+  //Helper function for resetting position of card to start
+  resetPosition() {
+    Animated.spring(this.state.position, {
+      toValue: { x: 0, y: 0 }
+    }).start();
+  }
+
+  //Style Card helper function that introduces rotation
   getCardStyle() {
     const { position } = this.state;
     //interpolation
     const rotate = position.x.interpolate({
-      inputRange: [-SCREEN_WIDTH * 2.0 , 0, SCREEN_WIDTH * 2.0],
+      inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
       outputRange: ['-120deg', '0deg', '120deg']
     });
-
     return {
       ...position.getLayout(),
       transform: [{ rotate }]
