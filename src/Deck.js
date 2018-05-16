@@ -26,21 +26,42 @@ class Deck extends Component {
     this.state = { panResponder, position }; //Works as this.panResponder = panResponder; and this.position = position
   }
 
+  getCardStyle() {
+    const { position } = this.state;
+    //interpolation
+    const rotate = position.x.interpolate({
+      inputRange: [-500, 0, 500],
+      outputRange: ['-120deg', '0deg', '120deg']
+    });
+
+    return {
+      ...position.getLayout(),
+      transform: [{ rotate }]
+    };
+  }
+
   //prop method renderCard
   renderCards() {
-    return this.props.data.map(item => {
+    return this.props.data.map((item, index) => {
+      if(index === 0) {
+        return (
+          <Animated.View
+            {...this.state.panResponder.panHandlers}
+            style={this.getCardStyle()}
+          >
+              {this.props.renderCard(item)}
+          </Animated.View>
+        );
+      }
       return this.props.renderCard(item);
     });
   }
 
   render() {
     return (
-      <Animated.View
-        {...this.state.panResponder.panHandlers}
-        style={this.state.position.getLayout()}
-      >
+      <View>
         {this.renderCards()}
-      </Animated.View>
+      </View>
     );
   }
 }
