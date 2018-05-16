@@ -39,6 +39,7 @@ class Deck extends Component {
     //Not supposed to mutate state
     this.state = { panResponder, position }; //Works as this.panResponder = panResponder; and this.position = position
   }
+
   //Helper function for swiping endpoint
   forceSwipe(direction) {
     //ternary expression to decide direction
@@ -46,7 +47,13 @@ class Deck extends Component {
     Animated.timing(this.state.position, {
       toValue: { x, y: 0 },
       duration: SWIPE_OUT_DURATION
-    }).start();
+    }).start(() => this.onSwipeComplete(direction));
+  }
+
+  onSwipeComplete(direction) {
+    const { onSwipeLeft, onSwipeRight } = this.props;
+    //Callback to functions passed in as props
+    direction === 'right' ? onSwipeRight() : onSwipeLeft();
   }
 
   //Helper function for resetting position of card to start
