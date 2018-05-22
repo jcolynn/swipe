@@ -6,7 +6,9 @@ import {
   StyleSheet,
   Animated,
   PanResponder,
-  Dimensions
+  Dimensions,
+  LayoutAnimation,
+  UIManager
 } from 'react-native';
 
 //Constants for Dimensions and hard coded numbers
@@ -43,6 +45,18 @@ class Deck extends Component {
     });
     //Not supposed to mutate state
     this.state = { panResponder, position, index: 0 }; //Works as this.panResponder = panResponder; and this.position = position
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.data !== this.props.data) {
+      this.setState({ index: 0 });
+    }
+  }
+
+  //For UI and Layout
+  componentWillUpdate() {
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    LayoutAnimation.spring();
   }
 
   //Helper function for swiping endpoint
